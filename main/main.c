@@ -2,7 +2,7 @@
 //
 // USDC TEMPLATE FIRMWARE for Q111 MCU  
 //
-// Program:	 LAPIS MCU Development Board Demo Code 
+// Program:	 LAPIS FeRAM Development Board Demo Code 
 //
 // Purpose:	 Demonstration Code for use with LAPIS MCU Development Board 
 //
@@ -18,7 +18,7 @@
 //		 9.) ADC Demo...
 //		10.) IsC Master Demo...    
 //
-// Authors:	 C. Schell, K. Bahar & F. Lee 
+// Authors:	 C. Schell, K. Bahar, F. Lee, & J. Fontus
 //		 	 ROHM Semiconductor USA, LLC
 //		 	 US Design Center
 //
@@ -46,7 +46,7 @@
 //						Total size (TABLE ) = 0828A   (33418)
 //
 // Started:  April 6th, 2013
-// Updated:	 JULY 17th, 2014
+// Updated:	 JULY 24th, 2014
 //*****************************************************************************
 
 // ================================ ML610Q111 ================================= 
@@ -125,7 +125,8 @@
 	#include 	<tbc.h>			// Set TBC (Timer Based Clock) API
 	#include 	<timer.h>		// Timer Macros & APIs
 	#include	<math.h>		// Mathematical functions
-	#include 	<uart.h>		// UART Function Prototypes	
+	#include 	<uart.h>		// UART Function Prototypes
+	#include	<feram_i2c.h>	// FeRAM Function Prototypes
 	//#include	<float.h>		// Numerical limits for floating-point numbers	
 	//#include	<string.h>		// Character string manipulation routines
 	//#include	<yvals.h>		// Called for by most Header Files
@@ -258,8 +259,6 @@
 	void UART_TX_TEST (void);				// no return value and no arguments
 	void UART_RX_TEST (void);				// no return value and no arguments
 
-	void Jerrys_Function (void);
-
 //*****************************************************************************
 //GLOBALS...
 
@@ -287,18 +286,27 @@ int main(void)
 	float float_a;				// 1.17549435e-38 to 3.40282347e+38
 	double double_a;			// 2.2250738585072014e-308 to 1.7976931348623157e+308 
 	int i,j,k,x,y;				// -32,768 to 32767
+	
+	
 
 	Init:
 		Initialization();		// Init Micro...(Ports, Timers, OSC, IRQ's, UART, etc...)
+			
 		
 	Primary_Loop:		
 		//PLACE USER CODE HERE...
-		//PWM_B0_ON(4000, 125);	//period, Duty Cycle variables
-
-		//Heartbeat_LED_pin ^= 1;
-		Jerrys_Function();
-		main_clrWDT();
-
+		
+		
+		
+		// ==FLASHING LED CODE== //
+		
+		GPIO_17 ^=1; 			// flashes LED connected to Q111 I/O A.0
+		main_clrWDT();			// Clear WDT
+		NOPx(65000);			// Delay slows down the flashing of the LED to be visible to the human eye
+		NOPx(65000);			// Delay slows down the flashing of the LED to be visible to the human eye
+		
+		//  ==END OF FLASHING LED CODE==  //
+		
 	goto Primary_Loop;
 		
 
@@ -1150,6 +1158,8 @@ static void _intUart( void )
 }
 
 
+
+
 //===========================================================================
 //INTERRUPT SERVICE ROUTINE FOR TBC
 static void TBC_ISR( void ) 
@@ -1288,12 +1298,5 @@ void UART_RX_TEST(void){
 }
 //===========================================================================
 
-//===========================================================================
-void Jerrys_Function(void){
-	int i;
 
-		
-}
-//===========================================================================
- 	
 
